@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../hooks/useCart';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, User, Phone, Mail, CreditCard, Tag, Loader2 } from 'lucide-react';
+
+// Declarar tipo global para Mercado Pago
+declare global {
+  interface Window {
+    MercadoPago: any;
+  }
+}
 
 export default function Checkout() {
   const { items, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [preferenceId, setPreferenceId] = useState<string | null>(null);
+  const [mp, setMp] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -22,6 +31,42 @@ export default function Checkout() {
 
   const subtotal = getTotalPrice();
   const total = subtotal + deliveryFee - discount;
+
+  // Inicializar Mercado Pago SDK
+  useEffect(() => {
+    const publicKey = import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY;
+    if (publicKey && window.MercadoPago) {
+      const mercadopago = new window.MercadoPago(publicKey);
+      setMp(mercadopago);
+      console.log('Mercado Pago SDK inicializado');
+    } else {
+      console.error('Public Key não encontrada ou SDK não carregado');
+    }
+  }, []);
+
+  // Criar botão do Mercado Pago quando houver preferência
+  useEffect(() => {
+    if (preferenceId && mp) {
+      console.log('Criando botão do Mercado Pago para:', preferenceId);
+      
+      // Limpar botão anterior se existir
+      const container = document.getElementById('mercadopago-button');
+      if (container) {
+        container.innerHTML = '';
+      }
+
+      // Criar novo botão
+      mp.checkout({
+        preference: {
+          id: preferenceId
+        },
+        render: {
+          container: '#mercadopago-button',
+          label: 'Pagar com Mercado Pago',
+        }
+      });
+    }
+  }, [preferenceId, mp]);
 
   if (items.length === 0) {
     return (
@@ -186,15 +231,14 @@ export default function Checkout() {
       const paymentResult = await paymentResponse.json();
       console.log('Dados do Mercado Pago:', paymentResult);
 
-      if (paymentResult.initPoint) {
-        // Limpar carrinho antes de redirecionar
-        clearCart();
-        console.log('Redirecionando para:', paymentResult.initPoint);
-        // Redirecionar para o Mercado Pago
-        window.location.href = paymentResult.initPoint;
+      if (paymentResult.preferenceId) {
+        // Definir a preferência para criar o botão
+        console.log('Preferência criada:', paymentResult.preferenceId);
+        setPreferenceId(paymentResult.preferenceId);
+        alert('Botão de pagamento gerado! Clique em "Pagar com Mercado Pago" abaixo.');
       } else {
-        console.error('initPoint não encontrado:', paymentResult);
-        alert('Erro: Link de pagamento não gerado. Tente novamente.');
+        console.error('preferenceId não encontrado:', paymentResult);
+        alert('Erro: Preferência de pagamento não gerada. Tente novamente.');
       }
 
     } catch (error) {
@@ -373,6 +417,22 @@ export default function Checkout() {
                 `Finalizar Pedido - R$ ${total.toFixed(2)}`
               )}
             </button>
+
+            {/* Botão do Mercado Pago */}
+            {preferenceId && (
+              <div className="card mt-6">
+                <h2 className="text-xl font-bold mb-4 text-center text-gold-500">
+                  💳 Pagar Agora
+                </h2>
+                <div 
+                  id="mercadopago-button" 
+                  className="min-h-[50px] flex items-center justify-center"
+                />
+                <p className="text-sm text-gray-400 text-center mt-4">
+                  Clique no botão acima para ser redirecionado ao Mercado Pago
+                </p>
+              </div>
+            )}
           </form>
         </div>
 
