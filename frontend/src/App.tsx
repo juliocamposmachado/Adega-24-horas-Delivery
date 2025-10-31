@@ -5,6 +5,7 @@ import { products, categories } from './data/products';
 import { useCart } from './hooks/useCart';
 import CartModal from './components/CartModal';
 import Checkout from './pages/Checkout';
+import AIChat from './components/AIChat';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -125,6 +126,9 @@ function App() {
         >
           <MessageCircle className="w-6 h-6" />
         </a>
+
+        {/* AI Chat Assistant */}
+        <AIChat />
       </div>
     </BrowserRouter>
   );
