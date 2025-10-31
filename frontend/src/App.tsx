@@ -2,10 +2,14 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Wine, ShoppingCart, Menu, X, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { products, categories } from './data/products';
+import { useCart } from './hooks/useCart';
+import CartModal from './components/CartModal';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '5511970603441';
+  const { getTotalItems } = useCart();
 
   return (
     <BrowserRouter>
@@ -27,13 +31,6 @@ function App() {
                 <Link to="/" className="hover:text-gold-500 transition">Home</Link>
                 <Link to="/catalogo" className="hover:text-gold-500 transition">Catálogo</Link>
                 <Link to="/sobre" className="hover:text-gold-500 transition">Sobre</Link>
-                <Link to="/admin/login" className="text-sm text-gray-400 hover:text-gold-500 transition">Admin</Link>
-                <button className="relative">
-                  <ShoppingCart className="w-6 h-6 hover:text-gold-500 transition" />
-                  <span className="absolute -top-2 -right-2 bg-wine-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    0
-                  </span>
-                </button>
               </nav>
 
               {/* Mobile Menu Button */}
@@ -103,6 +100,9 @@ function App() {
             </div>
           </div>
         </footer>
+
+        {/* Cart Modal */}
+        <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
 
         {/* WhatsApp Floating Button */}
         <a
@@ -223,9 +223,6 @@ function CatalogoPage() {
               <span className="text-gold-500 font-bold text-xl">
                 R$ {product.price.toFixed(2)}
               </span>
-              <button className="bg-wine-700 hover:bg-wine-600 text-white px-4 py-2 rounded-lg transition">
-                Adicionar
-              </button>
             </div>
           </div>
         ))}
