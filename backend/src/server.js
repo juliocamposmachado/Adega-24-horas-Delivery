@@ -41,6 +41,22 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Garante conexão com o Mongo em ambientes serverless (Vercel)
+const ensureDBConnection = async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log('✅ MongoDB conectado (lazy)');
+    } catch (err) {
+      console.error('❌ Erro ao conectar ao MongoDB:', err.message);
+      return res.status(500).json({ error: 'Erro de conexão com o banco' });
+    }
+  }
+  next();
+};
+
+app.use(ensureDBConnection);
+
 // Rotas
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -77,7 +93,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Conectar ao MongoDB
+// Conectar ao MongoDB (modo desenvolvimento/standalone)
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -88,14 +104,16 @@ const connectDB = async () => {
   }
 };
 
-// Iniciar servidor
+// Iniciar servidor apenas fora da Vercel (serverless)
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`🌐 API disponível em http://localhost:${PORT}`);
+if (!process.env.VERCEL) {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
+      console.log(`🌐 API disponível em http://localhost:${PORT}`);
+    });
   });
-});
+}
 
 export default app;
