@@ -40,9 +40,9 @@ MONGODB_URI=mongodb://localhost:27017/adega-radio-tatuape
 JWT_SECRET=sua_chave_secreta_super_segura_aqui
 
 # Uber Direct Credentials
-UBER_CLIENT_ID=yxJNLv8B0vOc7Vgw7z3U9EJ-lcPcAVFl
-UBER_CLIENT_SECRET=Mj_n4RU8SkKJdgCG5vKhYDs8FukOEeLWMWg5mePL
-UBER_ASYMMETRIC_KEY_ID=afa7d84c-1017-4cd7-a1e4-bd501d1569fc
+UBER_CLIENT_ID=
+UBER_CLIENT_SECRET=
+UBER_ASYMMETRIC_KEY_ID=
 UBER_SANDBOX=true
 
 # Endereço da loja
