@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { products, categories } from './data/products';
 import { useCart } from './hooks/useCart';
 import CartModal from './components/CartModal';
+import Checkout from './pages/Checkout';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,6 +70,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/catalogo" element={<CatalogoPage />} />
             <Route path="/sobre" element={<SobrePage />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
           </Routes>
         </main>
