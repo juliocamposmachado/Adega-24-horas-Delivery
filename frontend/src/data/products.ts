@@ -8,6 +8,7 @@ export interface Product {
 }
 
 export const categories = [
+  'Teste',
   'Vinhos',
   'Refrigerantes',
   'Energéticos',
@@ -24,6 +25,8 @@ export const categories = [
 const productImageUrl = 'https://media.giphy.com/media/gU25raLP4pUu4/giphy.gif';
 
 export const products: Product[] = [
+  // Produto de Teste para Mercado Pago
+  { id: 'test1', name: '🧪 TESTE - Produto de Checkout', description: 'Produto de teste para validar integração com Mercado Pago. Valor mínimo aceito.', price: 0.30, category: 'Teste', imageUrl: productImageUrl },
   // Vinhos
   { id: 'v1', name: 'Frisante Italiano Tinto Lambrusco Villa Giada Amabile', description: 'Vinho frisante italiano de sabor suave e adocicado. 750ml', price: 72.00, category: 'Vinhos', imageUrl: productImageUrl },
   { id: 'v2', name: 'Santa Carolina Cabernet Sauvignon Merlot', description: 'Vinho tinto chileno encorpado com notas de frutas vermelhas. 750ml', price: 60.00, category: 'Vinhos', imageUrl: productImageUrl },
