@@ -32,13 +32,18 @@ export default function Checkout() {
   const subtotal = getTotalPrice();
   const total = subtotal + deliveryFee - discount;
 
-  // Inicializar Mercado Pago SDK
+  // Inicializar Mercado Pago SDK e criar preferência automaticamente
   useEffect(() => {
     const publicKey = import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY;
     if (publicKey && window.MercadoPago) {
       const mercadopago = new window.MercadoPago(publicKey);
       setMp(mercadopago);
       console.log('Mercado Pago SDK inicializado');
+      
+      // Criar preferência automaticamente se houver itens
+      if (items.length > 0) {
+        createPreference();
+      }
     } else {
       console.error('Public Key não encontrada ou SDK não carregado');
     }
@@ -82,6 +87,61 @@ export default function Checkout() {
       </div>
     );
   }
+
+  // Função para criar preferência no Mercado Pago
+  const createPreference = async () => {
+    if (items.length === 0) return;
+    
+    try {
+      console.log('Criando preferência no Mercado Pago...');
+      
+      const paymentData = {
+        items: items.map(item => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        payer: {
+          name: 'Cliente',
+          phone: '11999999999',
+          email: 'cliente@adega.com',
+          address: 'A preencher'
+        },
+        orderId: 'temp-' + Date.now()
+      };
+
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      console.log('URL da API:', apiUrl);
+      console.log('Dados:', paymentData);
+
+      const paymentResponse = await fetch(`${apiUrl}/api/payment/create-preference`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(paymentData)
+      });
+
+      console.log('Resposta:', paymentResponse.status);
+
+      if (!paymentResponse.ok) {
+        const errorText = await paymentResponse.text();
+        console.error('Erro na resposta:', errorText);
+        return;
+      }
+
+      const paymentResult = await paymentResponse.json();
+      console.log('Preferência criada:', paymentResult);
+
+      if (paymentResult.preferenceId) {
+        setPreferenceId(paymentResult.preferenceId);
+      }
+    } catch (error) {
+      console.error('Erro ao criar preferência:', error);
+    }
+  };
 
   const handleApplyCoupon = async () => {
     if (!formData.coupon) return;
@@ -145,102 +205,48 @@ export default function Checkout() {
       return;
     }
 
-    // Pegar forma de pagamento selecionada
-    const paymentMethod = (document.querySelector('input[name="payment"]:checked') as HTMLInputElement)?.value || 'cash';
-
-    console.log('Iniciando checkout:', { paymentMethod, formData });
+    console.log('Finalizando pedido em dinheiro');
     setLoading(true);
 
     try {
-      // Se for pagamento em dinheiro, processar direto
-      if (paymentMethod === 'cash') {
-        const orderData = {
-          customer: {
-            name: formData.name,
-            phone: formData.phone,
-            email: formData.email,
-            address: {
-              fullAddress: formData.address,
-              complement: formData.complement
-            }
-          },
-          items: items.map(item => ({
-            productId: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity
-          })),
-          couponCode: formData.coupon,
-          paymentMethod: 'cash'
-        };
-
-        const orderResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
-        });
-
-        if (!orderResponse.ok) {
-          const error = await orderResponse.json();
-          alert(`Erro ao criar pedido: ${error.error}`);
-          return;
-        }
-
-        const order = await orderResponse.json();
-        clearCart();
-        alert(`Pedido #${order.orderNumber} realizado com sucesso!\n\nPagamento na entrega.`);
-        navigate('/');
-        return;
-      }
-
-      // Para qualquer outra forma de pagamento, usar Mercado Pago
-      console.log('Criando preferência no Mercado Pago...');
-      
-      const paymentData = {
+      const orderData = {
+        customer: {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          address: {
+            fullAddress: formData.address,
+            complement: formData.complement
+          }
+        },
         items: items.map(item => ({
+          productId: item.id,
           name: item.name,
           price: item.price,
           quantity: item.quantity
         })),
-        payer: {
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email || `${formData.phone}@adega.com`,
-          address: formData.address
-        },
-        orderId: 'temp-' + Date.now() // Temporário, será substituído pelo backend
+        couponCode: formData.coupon,
+        paymentMethod: 'cash'
       };
 
-      console.log('Enviando dados para API:', paymentData);
-
-      const paymentResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create-preference`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const orderResponse = await fetch(`${apiUrl}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paymentData)
+        mode: 'cors',
+        body: JSON.stringify(orderData)
       });
 
-      console.log('Resposta da API:', paymentResponse.status);
-
-      if (!paymentResponse.ok) {
-        const errorText = await paymentResponse.text();
-        console.error('Erro na resposta:', errorText);
-        alert(`Erro ao criar pagamento: ${errorText}`);
+      if (!orderResponse.ok) {
+        const error = await orderResponse.json();
+        alert(`Erro ao criar pedido: ${error.error}`);
         return;
       }
 
-      const paymentResult = await paymentResponse.json();
-      console.log('Dados do Mercado Pago:', paymentResult);
-
-      if (paymentResult.preferenceId) {
-        // Definir a preferência para criar o botão
-        console.log('Preferência criada:', paymentResult.preferenceId);
-        setPreferenceId(paymentResult.preferenceId);
-        alert('Botão de pagamento gerado! Clique em "Pagar com Mercado Pago" abaixo.');
-      } else {
-        console.error('preferenceId não encontrado:', paymentResult);
-        alert('Erro: Preferência de pagamento não gerada. Tente novamente.');
-      }
-
+      const order = await orderResponse.json();
+      clearCart();
+      alert(`Pedido #${order.orderNumber} realizado com sucesso!\n\nPagamento na entrega.`);
+      navigate('/');
     } catch (error) {
       console.error('Erro ao finalizar pedido:', error);
       alert(`Erro ao processar pedido: ${error instanceof Error ? error.message : 'Erro desconhecido'}. Tente novamente ou entre em contato via WhatsApp.`);
@@ -414,25 +420,9 @@ export default function Checkout() {
                   Processando...
                 </>
               ) : (
-                `Finalizar Pedido - R$ ${total.toFixed(2)}`
+                `Finalizar Pedido (Dinheiro) - R$ ${total.toFixed(2)}`
               )}
             </button>
-
-            {/* Botão do Mercado Pago */}
-            {preferenceId && (
-              <div className="card mt-6">
-                <h2 className="text-xl font-bold mb-4 text-center text-gold-500">
-                  💳 Pagar Agora
-                </h2>
-                <div 
-                  id="mercadopago-button" 
-                  className="min-h-[50px] flex items-center justify-center"
-                />
-                <p className="text-sm text-gray-400 text-center mt-4">
-                  Clique no botão acima para ser redirecionado ao Mercado Pago
-                </p>
-              </div>
-            )}
           </form>
         </div>
 
@@ -474,9 +464,32 @@ export default function Checkout() {
             </div>
 
             <div className="border-t border-gray-800 mt-4 pt-4">
-              <div className="flex justify-between text-xl font-bold">
+              <div className="flex justify-between text-xl font-bold mb-6">
                 <span>Total:</span>
                 <span className="text-gold-500">R$ {total.toFixed(2)}</span>
+              </div>
+
+              {/* Botão do Mercado Pago */}
+              <div className="mt-6">
+                <h3 className="text-lg font-bold mb-3 text-center">
+                  💳 Pagar Online
+                </h3>
+                {preferenceId ? (
+                  <>
+                    <div 
+                      id="mercadopago-button" 
+                      className="min-h-[50px] flex items-center justify-center"
+                    />
+                    <p className="text-xs text-gray-400 text-center mt-3">
+                      Pague com PIX ou Cartão via Mercado Pago
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-center py-4">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-gold-500" />
+                    <p className="text-sm text-gray-400 mt-2">Carregando pagamento...</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
