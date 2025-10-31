@@ -2,7 +2,14 @@
 
 ## Credenciais Configuradas
 
+### Produção (Atual)
 - **País**: Brasil
+- **Public Key**: `APP_USR-f3a01baf-5329-48cc-8941-d9eb8f2aa898`
+- **Access Token**: `APP_USR-2659796196204628-103100-139afaccddfdbd53d140dd87fc7fa7aa-29008060`
+- **Client ID**: `2659796196204628`
+- **Client Secret**: `pzonUdYKHi7r98HO82X85U59WHrQDNQc`
+
+### Teste (Sandbox)
 - **Public Key**: `APP_USR-838d26e2-5e01-4e4c-9c99-fe61c955a8e8`
 - **Access Token**: `APP_USR-3559899696506999-103100-7d2044abfdedde06dd6a752c7a56976f-1646858384`
 
@@ -11,8 +18,11 @@
 ### Variáveis de Ambiente (.env)
 
 ```env
-MERCADO_PAGO_PUBLIC_KEY=APP_USR-838d26e2-5e01-4e4c-9c99-fe61c955a8e8
-MERCADO_PAGO_ACCESS_TOKEN=APP_USR-3559899696506999-103100-7d2044abfdedde06dd6a752c7a56976f-1646858384
+# Produção
+MERCADO_PAGO_PUBLIC_KEY=APP_USR-f3a01baf-5329-48cc-8941-d9eb8f2aa898
+MERCADO_PAGO_ACCESS_TOKEN=APP_USR-2659796196204628-103100-139afaccddfdbd53d140dd87fc7fa7aa-29008060
+MERCADO_PAGO_CLIENT_ID=2659796196204628
+MERCADO_PAGO_CLIENT_SECRET=pzonUdYKHi7r98HO82X85U59WHrQDNQc
 FRONTEND_URL=http://localhost:5173
 BACKEND_URL=http://localhost:5000
 ```
@@ -135,8 +145,13 @@ https://www.mercadopago.com.br/developers/pt/docs/checkout-pro/additional-conten
 
 ## Produção
 
-Para usar em produção:
-1. Trocar credenciais de teste por credenciais de produção
-2. Configurar `UBER_SANDBOX=false`
-3. Atualizar URLs no `.env` para domínios reais
-4. Configurar webhook URL no painel do Mercado Pago
+✅ **As credenciais de produção já estão configuradas!**
+
+Para deploy:
+1. ✅ Credenciais de produção configuradas
+2. Configurar variáveis de ambiente no Vercel (veja `vercel-env-setup.md`)
+3. Atualizar URLs no `.env` para domínios reais após deploy
+4. Configurar webhook URL no painel do Mercado Pago:
+   - URL: `https://seu-backend.vercel.app/api/payment/webhook`
+   - Evento: **Payments**
+5. Testar pagamentos reais (cobranças serão processadas!)
