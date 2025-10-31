@@ -2,20 +2,13 @@ import { useState, useEffect } from 'react';
 import { useCart } from '../hooks/useCart';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, User, Phone, Mail, CreditCard, Tag, Loader2 } from 'lucide-react';
-
-// Declarar tipo global para Mercado Pago
-declare global {
-  interface Window {
-    MercadoPago: any;
-  }
-}
+import { Wallet } from '@mercadopago/sdk-react';
 
 export default function Checkout() {
   const { items, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
-  const [mp, setMp] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -32,46 +25,13 @@ export default function Checkout() {
   const subtotal = getTotalPrice();
   const total = subtotal + deliveryFee - discount;
 
-  // Inicializar Mercado Pago SDK e criar preferência automaticamente
+  // Criar preferência automaticamente quando houver itens
   useEffect(() => {
-    const publicKey = import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY;
-    if (publicKey && window.MercadoPago) {
-      const mercadopago = new window.MercadoPago(publicKey);
-      setMp(mercadopago);
-      console.log('Mercado Pago SDK inicializado');
-      
-      // Criar preferência automaticamente se houver itens
-      if (items.length > 0) {
-        createPreference();
-      }
-    } else {
-      console.error('Public Key não encontrada ou SDK não carregado');
+    if (items.length > 0) {
+      createPreference();
     }
   }, []);
 
-  // Criar botão do Mercado Pago quando houver preferência
-  useEffect(() => {
-    if (preferenceId && mp) {
-      console.log('Criando botão do Mercado Pago para:', preferenceId);
-      
-      // Limpar botão anterior se existir
-      const container = document.getElementById('mercadopago-button');
-      if (container) {
-        container.innerHTML = '';
-      }
-
-      // Criar novo botão
-      mp.checkout({
-        preference: {
-          id: preferenceId
-        },
-        render: {
-          container: '#mercadopago-button',
-          label: 'Pagar com Mercado Pago',
-        }
-      });
-    }
-  }, [preferenceId, mp]);
 
   if (items.length === 0) {
     return (
@@ -476,9 +436,13 @@ export default function Checkout() {
                 </h3>
                 {preferenceId ? (
                   <>
-                    <div 
-                      id="mercadopago-button" 
-                      className="min-h-[50px] flex items-center justify-center"
+                    <Wallet
+                      initialization={{ preferenceId: preferenceId }}
+                      customization={{
+                        texts: {
+                          valueProp: 'smart_option'
+                        }
+                      }}
                     />
                     <p className="text-xs text-gray-400 text-center mt-3">
                       Pague com PIX ou Cartão via Mercado Pago
