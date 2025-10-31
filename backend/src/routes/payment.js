@@ -11,21 +11,33 @@ mercadopago.configure({
 // Criar preferência de pagamento
 router.post('/create-preference', async (req, res) => {
   try {
+    console.log('Recebendo requisição de preferência:', req.body);
     const { items, payer, orderId } = req.body;
 
+    if (!items || !payer) {
+      return res.status(400).json({ error: 'Dados incompletos: items e payer são obrigatórios' });
+    }
+
+    // Limpar telefone (remover caracteres especiais)
+    const phoneClean = payer.phone.replace(/\D/g, '');
+    const areaCode = phoneClean.substring(0, 2);
+    const phoneNumber = phoneClean.substring(2);
+
+    console.log('Telefone processado:', { original: payer.phone, areaCode, phoneNumber });
+
     const preference = {
-      items: items.map((item: any) => ({
+      items: items.map((item) => ({
         title: item.name,
-        unit_price: item.price,
-        quantity: item.quantity,
+        unit_price: Number(item.price),
+        quantity: Number(item.quantity),
         currency_id: 'BRL'
       })),
       payer: {
         name: payer.name,
-        email: payer.email || 'cliente@adega.com',
+        email: payer.email || `${phoneClean}@adega.com`,
         phone: {
-          area_code: payer.phone.substring(0, 2),
-          number: payer.phone.substring(2)
+          area_code: areaCode,
+          number: phoneNumber
         },
         address: {
           street_name: payer.address,
@@ -33,26 +45,35 @@ router.post('/create-preference', async (req, res) => {
         }
       },
       back_urls: {
-        success: `${process.env.FRONTEND_URL}/pedido-confirmado?order=${orderId}`,
-        failure: `${process.env.FRONTEND_URL}/checkout?error=payment`,
-        pending: `${process.env.FRONTEND_URL}/pedido-pendente?order=${orderId}`
+        success: `${process.env.FRONTEND_URL || 'http://localhost:5173'}`,
+        failure: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/checkout?error=payment`,
+        pending: `${process.env.FRONTEND_URL || 'http://localhost:5173'}?pending=true`
       },
       auto_return: 'approved',
-      external_reference: orderId,
-      notification_url: `${process.env.BACKEND_URL}/api/payment/webhook`,
+      external_reference: orderId || 'temp-' + Date.now(),
+      notification_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payment/webhook`,
       statement_descriptor: 'ADEGA RADIO TATUAPE'
     };
 
+    console.log('Criando preferência no Mercado Pago...');
     const response = await mercadopago.preferences.create(preference);
     
+    console.log('Preferência criada com sucesso:', response.body.id);
+    console.log('Init Point:', response.body.init_point);
+
     res.json({
       preferenceId: response.body.id,
       initPoint: response.body.init_point,
       sandboxInitPoint: response.body.sandbox_init_point
     });
   } catch (error) {
-    console.error('Erro ao criar preferência de pagamento:', error);
-    res.status(500).json({ error: 'Erro ao processar pagamento' });
+    console.error('Erro detalhado ao criar preferência:', error);
+    console.error('Stack:', error.stack);
+    res.status(500).json({ 
+      error: 'Erro ao processar pagamento',
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
