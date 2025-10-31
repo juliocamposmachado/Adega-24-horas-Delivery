@@ -95,7 +95,6 @@ orderSchema.pre('save', async function(next) {
   next();
 });
 
-orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ 'customer.phone': 1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });
