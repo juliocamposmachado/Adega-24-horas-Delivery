@@ -70,6 +70,13 @@ const orderSchema = new mongoose.Schema({
     enum: ['credit_card', 'debit_card', 'pix', 'cash'],
     default: 'cash'
   },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected', 'cancelled', 'refunded'],
+    default: 'pending'
+  },
+  paymentId: String,
+  mercadoPagoPreferenceId: String,
   uberDelivery: {
     deliveryId: String,
     trackingUrl: String,

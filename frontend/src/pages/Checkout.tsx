@@ -100,9 +100,13 @@ export default function Checkout() {
       return;
     }
 
+    // Pegar forma de pagamento selecionada
+    const paymentMethod = (document.querySelector('input[name="payment"]:checked') as HTMLInputElement)?.value || 'cash';
+
     setLoading(true);
 
     try {
+      // 1. Criar o pedido
       const orderData = {
         customer: {
           name: formData.name,
@@ -119,23 +123,59 @@ export default function Checkout() {
           price: item.price,
           quantity: item.quantity
         })),
-        couponCode: formData.coupon
+        couponCode: formData.coupon,
+        paymentMethod: paymentMethod
       };
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+      const orderResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       });
 
-      if (response.ok) {
-        const order = await response.json();
-        clearCart();
-        alert(`Pedido #${order.orderNumber} realizado com sucesso!\n\nAcompanhe seu pedido em tempo real.`);
-        navigate('/');
-      } else {
-        const error = await response.json();
+      if (!orderResponse.ok) {
+        const error = await orderResponse.json();
         alert(`Erro ao criar pedido: ${error.error}`);
+        return;
+      }
+
+      const order = await orderResponse.json();
+
+      // 2. Se não for pagamento em dinheiro, criar preferência do Mercado Pago
+      if (paymentMethod !== 'cash') {
+        const paymentData = {
+          items: items.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+          })),
+          payer: {
+            name: formData.name,
+            phone: formData.phone,
+            email: formData.email || 'cliente@adega.com',
+            address: formData.address
+          },
+          orderId: order._id
+        };
+
+        const paymentResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create-preference`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(paymentData)
+        });
+
+        if (paymentResponse.ok) {
+          const paymentData = await paymentResponse.json();
+          // Redirecionar para checkout do Mercado Pago
+          window.location.href = paymentData.initPoint;
+        } else {
+          alert('Erro ao processar pagamento. Tente novamente.');
+        }
+      } else {
+        // Pagamento em dinheiro - confirmar pedido diretamente
+        clearCart();
+        alert(`Pedido #${order.orderNumber} realizado com sucesso!\n\nPagamento na entrega.`);
+        navigate('/');
       }
     } catch (error) {
       console.error('Erro ao finalizar pedido:', error);
