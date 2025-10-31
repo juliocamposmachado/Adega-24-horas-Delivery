@@ -60,6 +60,22 @@ function App() {
                 <Link to="/catalogo" className="block py-2 hover:text-gold-500 transition">Catálogo</Link>
                 <Link to="/sobre" className="block py-2 hover:text-gold-500 transition">Sobre</Link>
                 <Link to="/admin/login" className="block py-2 text-gray-400 hover:text-gold-500 transition">Admin</Link>
+                {/* Add Cart button to mobile menu */}
+                <button 
+                  onClick={() => {
+                    setCartOpen(true);
+                    setMenuOpen(false); // Close mobile menu when cart is opened
+                  }} 
+                  className="relative block py-2 w-full text-left hover:text-gold-500 transition flex items-center gap-2"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  <span>Carrinho</span>
+                  {getTotalItems() > 0 && (
+                    <span className="ml-auto bg-wine-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </button>
               </nav>
             )}
           </div>
