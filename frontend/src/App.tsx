@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Wine, ShoppingCart, Menu, X, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
+import { products, categories } from './data/products';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '5511999999999';
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '5511970603441';
 
   return (
     <BrowserRouter>
@@ -157,13 +158,84 @@ function HomePage() {
 
 // Catálogo Page
 function CatalogoPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-8 text-center">Catálogo de Produtos</h1>
-      <div className="text-center text-gray-400">
-        <p className="mb-4">Catálogo em desenvolvimento...</p>
-        <p className="text-sm">Configure o backend e MongoDB para visualizar os produtos</p>
+      
+      {/* Filtros */}
+      <div className="mb-8 space-y-4">
+        <input
+          type="text"
+          placeholder="Buscar produtos..."
+          className="w-full input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedCategory('Todos')}
+            className={`px-4 py-2 rounded-lg transition ${
+              selectedCategory === 'Todos'
+                ? 'bg-gold-500 text-gray-900'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Todos ({products.length})
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-lg transition ${
+                selectedCategory === cat
+                  ? 'bg-gold-500 text-gray-900'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              {cat} ({products.filter(p => p.category === cat).length})
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Grid de Produtos */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filteredProducts.map(product => (
+          <div key={product.id} className="card hover:border-gold-500 transition cursor-pointer">
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-full h-48 object-cover rounded-lg mb-4"
+            />
+            <h3 className="font-bold text-lg mb-2 line-clamp-2">{product.name}</h3>
+            <p className="text-sm text-gray-400 mb-4 line-clamp-2">{product.description}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-gold-500 font-bold text-xl">
+                R$ {product.price.toFixed(2)}
+              </span>
+              <button className="bg-wine-700 hover:bg-wine-600 text-white px-4 py-2 rounded-lg transition">
+                Adicionar
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredProducts.length === 0 && (
+        <div className="text-center text-gray-400 py-12">
+          <p>Nenhum produto encontrado.</p>
+        </div>
+      )}
     </div>
   );
 }
