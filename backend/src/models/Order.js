@@ -99,4 +99,4 @@ orderSchema.index({ 'customer.phone': 1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });
 
-export default mongoose.model('Order', orderSchema);
+export default mongoose.model('Order', orderSchema, 'pedidos');

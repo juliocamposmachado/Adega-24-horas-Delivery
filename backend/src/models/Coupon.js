@@ -78,4 +78,4 @@ couponSchema.methods.calculateDiscount = function(subtotal) {
   return Math.min(discount, subtotal);
 };
 
-export default mongoose.model('Coupon', couponSchema);
+export default mongoose.model('Coupon', couponSchema, 'cupons');

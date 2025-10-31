@@ -56,4 +56,4 @@ adminSchema.methods.toJSON = function() {
   return obj;
 };
 
-export default mongoose.model('Admin', adminSchema);
+export default mongoose.model('Admin', adminSchema, 'administradores');

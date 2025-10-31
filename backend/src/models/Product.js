@@ -42,4 +42,4 @@ productSchema.index({ name: 'text', description: 'text' });
 productSchema.index({ category: 1 });
 productSchema.index({ price: 1 });
 
-export default mongoose.model('Product', productSchema);
+export default mongoose.model('Product', productSchema, 'produtos');
