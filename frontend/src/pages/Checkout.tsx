@@ -438,11 +438,6 @@ export default function Checkout() {
                   <>
                     <Wallet
                       initialization={{ preferenceId: preferenceId }}
-                      customization={{
-                        texts: {
-                          valueProp: 'smart_option'
-                        }
-                      }}
                     />
                     <p className="text-xs text-gray-400 text-center mt-3">
                       Pague com PIX ou Cartão via Mercado Pago

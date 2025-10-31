@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MessageCircle, Send, Loader2, Sparkles } from 'lucide-react';
+import { Send, Loader2, Sparkles } from 'lucide-react';
 import { generateChatResponse } from '../services/geminiService';
 
 interface Message {
