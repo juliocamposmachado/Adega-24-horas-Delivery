@@ -31,6 +31,15 @@ function App() {
                 <Link to="/" className="hover:text-gold-500 transition">Home</Link>
                 <Link to="/catalogo" className="hover:text-gold-500 transition">Catálogo</Link>
                 <Link to="/sobre" className="hover:text-gold-500 transition">Sobre</Link>
+                <Link to="/admin/login" className="text-sm text-gray-400 hover:text-gold-500 transition">Admin</Link>
+                <button onClick={() => setCartOpen(true)} className="relative">
+                  <ShoppingCart className="w-6 h-6 hover:text-gold-500 transition" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-wine-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </button>
               </nav>
 
               {/* Mobile Menu Button */}
@@ -223,6 +232,14 @@ function CatalogoPage() {
               <span className="text-gold-500 font-bold text-xl">
                 R$ {product.price.toFixed(2)}
               </span>
+              <button 
+                onClick={() => {
+                  useCart.getState().addItem(product);
+                }}
+                className="bg-wine-700 hover:bg-wine-600 text-white px-4 py-2 rounded-lg transition"
+              >
+                Adicionar
+              </button>
             </div>
           </div>
         ))}
