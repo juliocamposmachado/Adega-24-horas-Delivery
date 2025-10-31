@@ -1,5 +1,5 @@
-const express = require('express');
-const mercadopago = require('mercadopago');
+import express from 'express';
+import mercadopago from 'mercadopago';
 
 const router = express.Router();
 
@@ -92,7 +92,7 @@ router.post('/webhook', async (req, res) => {
       const status = payment.body.status;
       
       // Atualizar status do pedido no banco de dados
-      const Order = require('../models/Order').default;
+      const { default: Order } = await import('../models/Order.js');
       
       let orderStatus = 'pending';
       if (status === 'approved') {
@@ -134,4 +134,4 @@ router.get('/status/:paymentId', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

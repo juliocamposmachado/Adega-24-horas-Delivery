@@ -70,56 +70,43 @@ router.post('/validate-coupon', async (req, res) => {
 // Criar pedido
 router.post('/', async (req, res) => {
   try {
-    const { customer, items, couponCode } = req.body;
+    const { customer, items, couponCode, paymentMethod } = req.body;
 
-    // Validar produtos e calcular subtotal
+    console.log('Recebendo pedido:', { customer, items, paymentMethod });
+
+    // Calcular subtotal baseado nos itens recebidos
     let subtotal = 0;
     const orderItems = [];
 
     for (const item of items) {
-      const product = await Product.findById(item.productId);
-
-      if (!product || !product.active) {
-        return res.status(400).json({ 
-          error: `Produto ${item.productId} não está disponível` 
-        });
-      }
-
-      if (product.stock < item.quantity) {
-        return res.status(400).json({ 
-          error: `Estoque insuficiente para ${product.name}` 
-        });
-      }
-
-      const itemTotal = product.price * item.quantity;
+      const itemTotal = item.price * item.quantity;
       subtotal += itemTotal;
 
       orderItems.push({
-        productId: product._id,
-        name: product.name,
-        price: product.price,
+        productId: item.productId || item.name,
+        name: item.name,
+        price: item.price,
         quantity: item.quantity
       });
     }
 
-    // Aplicar cupom
+    // Aplicar cupom se existir
     let discount = 0;
     if (couponCode) {
-      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
-      if (coupon && coupon.isValid()) {
-        discount = coupon.calculateDiscount(subtotal);
-        coupon.usedCount += 1;
-        await coupon.save();
+      try {
+        const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+        if (coupon && coupon.isValid()) {
+          discount = coupon.calculateDiscount(subtotal);
+          coupon.usedCount += 1;
+          await coupon.save();
+        }
+      } catch (err) {
+        console.log('Erro ao aplicar cupom:', err.message);
       }
     }
 
-    // Calcular frete
-    const quote = await uberDirectService.getDeliveryQuote(
-      process.env.STORE_ADDRESS,
-      customer.address.fullAddress
-    );
-
-    const deliveryFee = quote.fee;
+    // Frete fixo temporário (R$ 15.00)
+    const deliveryFee = 15.00;
     const total = subtotal + deliveryFee - discount;
 
     // Criar pedido
@@ -131,35 +118,41 @@ router.post('/', async (req, res) => {
       discount,
       total,
       couponCode,
+      paymentMethod: paymentMethod || 'cash',
       status: 'confirmed'
     });
 
     await order.save();
 
-    // Criar entrega no Uber Direct
-    const delivery = await uberDirectService.createDelivery(order);
+    console.log('Pedido criado:', order.orderNumber);
 
-    order.uberDelivery = {
-      deliveryId: delivery.deliveryId,
-      trackingUrl: delivery.trackingUrl,
-      status: delivery.status,
-      eta: quote.eta
-    };
-    order.status = 'preparing';
+    // Tentar criar entrega no Uber Direct (opcional)
+    try {
+      if (process.env.UBER_DIRECT_CLIENT_ID && process.env.STORE_ADDRESS) {
+        const quote = await uberDirectService.getDeliveryQuote(
+          process.env.STORE_ADDRESS,
+          customer.address.fullAddress
+        );
+        
+        const delivery = await uberDirectService.createDelivery(order);
 
-    await order.save();
-
-    // Atualizar estoque
-    for (const item of orderItems) {
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: { stock: -item.quantity }
-      });
+        order.uberDelivery = {
+          deliveryId: delivery.deliveryId,
+          trackingUrl: delivery.trackingUrl,
+          status: delivery.status,
+          eta: quote.eta
+        };
+        order.status = 'preparing';
+        await order.save();
+      }
+    } catch (err) {
+      console.log('Uber Direct não disponível:', err.message);
     }
 
     res.status(201).json(order);
   } catch (error) {
     console.error('Erro ao criar pedido:', error);
-    res.status(500).json({ error: 'Erro ao criar pedido' });
+    res.status(500).json({ error: 'Erro ao criar pedido', message: error.message });
   }
 });
 
