@@ -19,7 +19,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://adega-24-horas-delivery.vercel.app',
-  process.env.FRONTEND_URL
+  process.env.FRONTEND_URL,
+  process.env.VERCEL_URL // Adicionar a URL da Vercel para o backend
 ].filter(Boolean);
 
 app.use(cors({
