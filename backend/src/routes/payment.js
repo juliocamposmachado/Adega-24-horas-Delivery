@@ -1,11 +1,12 @@
 import express from 'express';
-import mercadopago from 'mercadopago';
+import { MercadoPagoConfig, Preference } from 'mercadopago';
 
 const router = express.Router();
 
 // Configurar Mercado Pago
-mercadopago.configure({
-  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN || ''
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
+  options: { timeout: 5000, idempotencyKey: 'abc' }
 });
 
 // Criar preferência de pagamento
@@ -25,7 +26,7 @@ router.post('/create-preference', async (req, res) => {
 
     console.log('Telefone processado:', { original: payer.phone, areaCode, phoneNumber });
 
-    const preference = {
+    const preferenceBody = {
       items: items.map((item) => ({
         title: item.name,
         unit_price: Number(item.price),
@@ -56,7 +57,10 @@ router.post('/create-preference', async (req, res) => {
     };
 
     console.log('Criando preferência no Mercado Pago...');
-    const response = await mercadopago.preferences.create(preference);
+    const preference = new Preference(client);
+    const response = await preference.create({
+      body: preferenceBody
+    });
     
     console.log('Preferência criada com sucesso:', response.body.id);
     console.log('Init Point:', response.body.init_point);
@@ -86,7 +90,7 @@ router.post('/webhook', async (req, res) => {
       const paymentId = data.id;
       
       // Buscar informações do pagamento
-      const payment = await mercadopago.payment.get(paymentId);
+      const payment = await client.payment.get({ id: paymentId });
       
       const orderId = payment.body.external_reference;
       const status = payment.body.status;
@@ -121,7 +125,7 @@ router.post('/webhook', async (req, res) => {
 router.get('/status/:paymentId', async (req, res) => {
   try {
     const { paymentId } = req.params;
-    const payment = await mercadopago.payment.get(parseInt(paymentId));
+    const payment = await client.payment.get({ id: parseInt(paymentId) });
     
     res.json({
       status: payment.body.status,
