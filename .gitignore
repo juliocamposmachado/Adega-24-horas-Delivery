@@ -3,6 +3,10 @@ node_modules/
 .pnp
 .pnp.js
 
+# Vercel
+.vercel/
+.vercel-envs/
+
 # Testing
 coverage/
 
