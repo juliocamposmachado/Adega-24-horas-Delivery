@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install",
+  "buildCommand": "cd frontend && npm cache clean --force && npm install && npx vite build",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
   "rewrites": [
