@@ -6,10 +6,10 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node_modules/.bin/vite",
+    "build": "node_modules/.bin/vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview",
+    "preview": "node_modules/.bin/vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
