@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Wine, ShoppingCart, Menu, X, MessageCircle, LayoutDashboard, Radio } from 'lucide-react';
+import { Wine, ShoppingCart, Menu, X, MessageCircle, LayoutDashboard, Radio, CreditCard, Truck, Atom, Zap, Code, Wind, Server, Triangle, Lock, ShieldCheck, BadgeCheck, Award } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { products, categories } from './data/products';
 import { useCart } from './hooks/useCart';
@@ -155,8 +155,72 @@ function App() {
                 </a>
               </div>
             </div>
-            <div className="border-t border-gray-800 mt-8 pt-6 text-center text-sm text-gray-500">
-              © 2024 Adega Rádio Tatuapé FM Express. Todos os direitos reservados.
+
+            {/* Brands and Badges */}
+            <div className="mt-10 space-y-8">
+              {/* Pagamentos e Entrega */}
+              <div>
+                <h4 className="text-sm uppercase tracking-wider text-gray-400 mb-3">Pagamentos e Entrega</h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs">
+                    <CreditCard className="w-4 h-4 text-gold-500" /> Mercado Pago
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs">
+                    <Truck className="w-4 h-4 text-gold-500" /> Uber Direct
+                  </span>
+                </div>
+              </div>
+
+              {/* Tecnologias */}
+              <div>
+                <h4 className="text-sm uppercase tracking-wider text-gray-400 mb-3">Tecnologias</h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="React 18">
+                    <Atom className="w-4 h-4 text-sky-400" /> React
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Vite 7">
+                    <Zap className="w-4 h-4 text-yellow-400" /> Vite
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="TypeScript 5">
+                    <Code className="w-4 h-4 text-blue-400" /> TypeScript
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Tailwind CSS 3">
+                    <Wind className="w-4 h-4 text-teal-400" /> TailwindCSS
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Node.js">
+                    <Server className="w-4 h-4 text-green-400" /> Node.js
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Vercel">
+                    <Triangle className="w-4 h-4 text-white" /> Vercel
+                  </span>
+                </div>
+              </div>
+
+              {/* Segurança */}
+              <div>
+                <h4 className="text-sm uppercase tracking-wider text-gray-400 mb-3">Segurança</h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Conexão protegida por HTTPS/SSL">
+                    <Lock className="w-4 h-4 text-emerald-400" /> Site Seguro (HTTPS)
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Boas práticas inspiradas no PCI DSS">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" /> Boas práticas PCI
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Boas práticas alinhadas à ISO/IEC 27001">
+                    <Award className="w-4 h-4 text-emerald-400" /> Padrões ISO 27001
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-gray-800/80 text-gray-200 px-3 py-1.5 rounded-full border border-gray-700 text-xs" title="Verificações e monitoramento contínuos">
+                    <BadgeCheck className="w-4 h-4 text-emerald-400" /> Verificações Ativas
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Observação: selos exibem uso de boas práticas e integrações; certificações formais pertencem às respectivas plataformas (ex.: Mercado Pago, Vercel).
+                </p>
+              </div>
+
+              <div className="border-t border-gray-800 pt-6 text-center text-sm text-gray-500">
+                © 2024 Adega Rádio Tatuapé FM Express. Todos os direitos reservados.
+              </div>
             </div>
           </div>
         </footer>
