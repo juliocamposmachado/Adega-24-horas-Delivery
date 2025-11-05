@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Send, Loader2, Sparkles } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Send, Loader2, Sparkles, Volume2 } from 'lucide-react';
 import { generateChatResponse } from '../services/geminiService';
 
 interface Message {
@@ -7,6 +7,7 @@ interface Message {
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  links?: { text: string; url: string }[];
 }
 
 export default function AIChat() {
@@ -14,13 +15,72 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Olá! Sou o assistente virtual da Adega Rádio Tatuapé FM. Como posso ajudar você hoje?',
+      text: 'Olá! Sou Juliette, assistente virtual da Adega Rádio Tatuapé FM. Como posso ajudar você hoje?',
       sender: 'ai',
       timestamp: new Date()
     }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const synth = window.speechSynthesis;
+
+  // Função para ler em voz alta com voz feminina
+  const speakText = (text: string) => {
+    if (synth.speaking) {
+      synth.cancel();
+    }
+
+    // Remover links markdown do texto antes de falar
+    const cleanText = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.2;
+    
+    // Tentar usar voz feminina em português
+    const voices = synth.getVoices();
+    const femaleVoice = voices.find(voice => 
+      voice.lang.startsWith('pt') && voice.name.toLowerCase().includes('fem')
+    ) || voices.find(voice => 
+      voice.lang.startsWith('pt')
+    ) || voices[0];
+
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    synth.speak(utterance);
+  };
+
+  // Scroll automático para última mensagem
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Extrair e processar links da resposta
+  const processResponse = (text: string) => {
+    const links: { text: string; url: string }[] = [];
+    
+    // Regex para encontrar links markdown
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let match;
+    
+    while ((match = linkRegex.exec(text)) !== null) {
+      links.push({
+        text: match[1],
+        url: match[2]
+      });
+    }
+    
+    return { text, links };
+  };
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
@@ -38,33 +98,57 @@ export default function AIChat() {
 
     try {
       const context = `
-        Adega Rádio Tatuapé FM Express
-        - Localização: Tatuapé, São Paulo
-        - Horário: 24 horas
-        - Delivery via Uber Direct
-        - Produtos: Vinhos, Cervejas, Whiskies, Gin, Vodka, Energéticos, Refrigerantes
+        Você é Juliette, assistente virtual feminina da Adega Rádio Tatuapé FM Express.
+        
+        INFORMAÇÕES DA ADEGA:
+        - Nome: Adega Rádio Tatuapé FM Express
+        - Localização: Rua Dante Pellacani, 92 - Tatuapé, São Paulo/SP - CEP 03334-070
+        - Horário: 24 horas, 7 dias por semana
+        - Delivery: Rápido via Uber Direct
+        - Produtos: Vinhos, Cervejas, Whiskies, Gin, Vodka, Energéticos, Refrigerantes, Águas
         - WhatsApp: (11) 97060-3441
         - Formas de pagamento: Dinheiro, PIX, Cartão de Crédito/Débito, Mercado Pago
+        
+        LINKS IMPORTANTES (use formato markdown [texto](url)):
+        - Catálogo: [Ver Catálogo Completo](https://adega-24-horas-delivery.vercel.app/catalogo)
+        - Sobre Nós: [Conhecer a Adega](https://adega-24-horas-delivery.vercel.app/sobre)
+        - WhatsApp: [Falar no WhatsApp](https://api.whatsapp.com/send/?phone=5511970603441&text=Ol%C3%A1%2C+gostaria+de+fazer+um+pedido&type=phone_number&app_absent=0)
+        - Checkout: [Finalizar Pedido](https://adega-24-horas-delivery.vercel.app/checkout)
+        
+        INSTRUÇÕES:
+        - Seja simpática, prestativa e profissional
+        - Sempre que relevante, inclua links usando formato markdown
+        - Apresente-se como Juliette
+        - Ajude o usuário a encontrar produtos, fazer pedidos e tirar dúvidas
+        - Sugira produtos e promova a variedade da adega
+        - Sempre mencione delivery rápido e atendimento 24h
       `;
 
       const aiResponse = await generateChatResponse(input, context);
 
+      const { text, links } = processResponse(aiResponse);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: aiResponse,
+        text,
         sender: 'ai',
-        timestamp: new Date()
+        timestamp: new Date(),
+        links
       };
 
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Ler resposta em voz alta
+      speakText(aiResponse);
     } catch (error) {
       console.error('Erro ao gerar resposta:', error);
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Desculpe, ocorreu um erro. Por favor, tente novamente ou entre em contato via WhatsApp.',
+        text: 'Desculpe, ocorreu um erro. Por favor, tente novamente ou [entre em contato via WhatsApp](https://api.whatsapp.com/send/?phone=5511970603441&text=Ol%C3%A1%2C+gostaria+de+fazer+um+pedido&type=phone_number&app_absent=0).',
         sender: 'ai',
-        timestamp: new Date()
+        timestamp: new Date(),
+        links: [{ text: 'entre em contato via WhatsApp', url: 'https://api.whatsapp.com/send/?phone=5511970603441&text=Ol%C3%A1%2C+gostaria+de+fazer+um+pedido&type=phone_number&app_absent=0' }]
       };
 
       setMessages(prev => [...prev, errorMessage]);
@@ -99,8 +183,8 @@ export default function AIChat() {
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 h-6 text-white" />
           <div>
-            <h3 className="font-bold text-white">Assistente AI</h3>
-            <p className="text-xs text-purple-100">Powered by Gemini 2.0</p>
+            <h3 className="font-bold text-white">Juliette - Assistente AI</h3>
+            <p className="text-xs text-purple-100">🎤 Com síntese de voz • Gemini 2.0</p>
           </div>
         </div>
         <button
@@ -125,13 +209,52 @@ export default function AIChat() {
                   : 'bg-gray-800 text-gray-100'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-              <p className="text-xs opacity-60 mt-1">
-                {message.timestamp.toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit'
+              {/* Renderizar texto com links clicáveis */}
+              <div className="text-sm whitespace-pre-wrap">
+                {message.text.split(/\[([^\]]+)\]\(([^)]+)\)/).map((part, i) => {
+                  // Se o índice é ímpar, é o texto do link
+                  // Se o próximo é a URL
+                  if (i % 3 === 1) {
+                    const url = message.text.split(/\[([^\]]+)\]\(([^)]+)\)/)[i + 1];
+                    return (
+                      <a
+                        key={i}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 underline font-semibold"
+                      >
+                        {part}
+                      </a>
+                    );
+                  } else if (i % 3 === 2) {
+                    return null; // Já usado como URL
+                  }
+                  return <span key={i}>{part}</span>;
                 })}
-              </p>
+              </div>
+              
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs opacity-60">
+                  {message.timestamp.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+                
+                {/* Botão para ouvir novamente */}
+                {message.sender === 'ai' && (
+                  <button
+                    onClick={() => speakText(message.text)}
+                    disabled={isSpeaking}
+                    className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 disabled:opacity-50"
+                    title="Ouvir mensagem"
+                  >
+                    <Volume2 className="w-3 h-3" />
+                    {isSpeaking ? 'Falando...' : 'Ouvir'}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -143,6 +266,8 @@ export default function AIChat() {
             </div>
           </div>
         )}
+        
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
