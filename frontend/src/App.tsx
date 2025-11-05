@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Wine, ShoppingCart, Menu, X, MessageCircle } from 'lucide-react';
+import { Wine, ShoppingCart, Menu, X, MessageCircle, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { products, categories } from './data/products';
 import { useCart } from './hooks/useCart';
@@ -7,6 +7,10 @@ import CartModal from './components/CartModal';
 import Checkout from './pages/Checkout';
 import AIChat from './components/AIChat';
 import SplashScreen from './components/SplashScreen';
+import { AdminProvider } from './contexts/AdminContext';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminOrders from './pages/AdminOrders';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -34,6 +38,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <AdminProvider>
       <div className="min-h-screen bg-gray-950 text-gray-100">
         {/* Header */}
         <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
@@ -52,7 +57,10 @@ function App() {
                 <Link to="/" className="hover:text-gold-500 transition">Home</Link>
                 <Link to="/catalogo" className="hover:text-gold-500 transition">Catálogo</Link>
                 <Link to="/sobre" className="hover:text-gold-500 transition">Sobre</Link>
-                <Link to="/admin/login" className="text-sm text-gray-400 hover:text-gold-500 transition">Admin</Link>
+                <Link to="/admin/dashboard" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gold-500 transition">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
                 <button onClick={() => setCartOpen(true)} className="relative">
                   <ShoppingCart className="w-6 h-6 hover:text-gold-500 transition" />
                   {getTotalItems() > 0 && (
@@ -78,7 +86,10 @@ function App() {
                 <Link to="/" className="block py-2 hover:text-gold-500 transition">Home</Link>
                 <Link to="/catalogo" className="block py-2 hover:text-gold-500 transition">Catálogo</Link>
                 <Link to="/sobre" className="block py-2 hover:text-gold-500 transition">Sobre</Link>
-                <Link to="/admin/login" className="block py-2 text-gray-400 hover:text-gold-500 transition">Admin</Link>
+                <Link to="/admin/dashboard" className="flex items-center gap-2 py-2 text-gray-400 hover:text-gold-500 transition">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
                 {/* Add Cart button to mobile menu */}
                 <button 
                   onClick={() => {
@@ -107,7 +118,9 @@ function App() {
             <Route path="/catalogo" element={<CatalogoPage />} />
             <Route path="/sobre" element={<SobrePage />} />
             <Route path="/checkout" element={<Checkout />} />
-            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
           </Routes>
         </main>
 
@@ -126,7 +139,7 @@ function App() {
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li><Link to="/catalogo" className="hover:text-gold-500">Catálogo</Link></li>
                   <li><Link to="/sobre" className="hover:text-gold-500">Sobre</Link></li>
-                  <li><Link to="/admin/login" className="hover:text-gold-500">Painel Admin</Link></li>
+                  <li><Link to="/admin/dashboard" className="hover:text-gold-500">Dashboard Admin</Link></li>
                 </ul>
               </div>
               <div>
@@ -165,6 +178,7 @@ function App() {
         {/* AI Chat Assistant */}
         <AIChat />
       </div>
+      </AdminProvider>
     </BrowserRouter>
   );
 }
@@ -325,34 +339,6 @@ function SobrePage() {
           <li>Vodkas (4 opções)</li>
           <li>E muito mais!</li>
         </ul>
-      </div>
-    </div>
-  );
-}
-
-// Admin Login Page
-function AdminLoginPage() {
-  return (
-    <div className="container mx-auto px-4 py-12 max-w-md">
-      <div className="card">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gold-500">Painel Admin</h1>
-        <p className="text-center text-gray-400 mb-6">Sistema de autenticação</p>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
-            <input type="email" className="input" placeholder="admin@adega.com" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Senha</label>
-            <input type="password" className="input" placeholder="••••••••" />
-          </div>
-          <button className="btn-primary w-full">
-            Entrar
-          </button>
-        </div>
-        <p className="text-sm text-gray-500 text-center mt-6">
-          Configure o backend para ativar a autenticação
-        </p>
       </div>
     </div>
   );
