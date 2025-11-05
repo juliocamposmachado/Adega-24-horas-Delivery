@@ -1,17 +1,36 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Wine, ShoppingCart, Menu, X, MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { products, categories } from './data/products';
 import { useCart } from './hooks/useCart';
 import CartModal from './components/CartModal';
 import Checkout from './pages/Checkout';
 import AIChat from './components/AIChat';
+import SplashScreen from './components/SplashScreen';
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '5511970603441';
   const { getTotalItems } = useCart();
+
+  // Verificar se já mostrou splash nesta sessão
+  useEffect(() => {
+    const splashShown = sessionStorage.getItem('splashShown');
+    if (splashShown === 'true') {
+      setShowSplash(false);
+    }
+  }, []);
+
+  const handleSplashFinish = () => {
+    sessionStorage.setItem('splashShown', 'true');
+    setShowSplash(false);
+  };
+
+  if (showSplash) {
+    return <SplashScreen onFinish={handleSplashFinish} />;
+  }
 
   return (
     <BrowserRouter>
