@@ -15,7 +15,7 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Olá! Sou Juliette, assistente virtual da Adega Rádio Tatuapé FM. Como posso ajudar você hoje?',
+      text: 'Olá! Sou Julio, assistente virtual da Adega Rádio Tatuapé FM. Como posso ajudar você hoje?',
       sender: 'ai',
       timestamp: new Date()
     }
@@ -98,7 +98,7 @@ export default function AIChat() {
 
     try {
       const context = `
-        Você é Juliette, assistente virtual feminina da Adega Rádio Tatuapé FM Express.
+        Você é Julio, assistente virtual da Adega Rádio Tatuapé FM Express.
         
         INFORMAÇÕES DA ADEGA:
         - Nome: Adega Rádio Tatuapé FM Express
@@ -116,9 +116,9 @@ export default function AIChat() {
         - Checkout: [Finalizar Pedido](https://adega-24-horas-delivery.vercel.app/checkout)
         
         INSTRUÇÕES:
-        - Seja simpática, prestativa e profissional
+        - Seja simpático, prestativo e profissional
         - Sempre que relevante, inclua links usando formato markdown
-        - Apresente-se como Juliette
+        - Apresente-se como Julio
         - Ajude o usuário a encontrar produtos, fazer pedidos e tirar dúvidas
         - Sugira produtos e promova a variedade da adega
         - Sempre mencione delivery rápido e atendimento 24h
@@ -183,7 +183,7 @@ export default function AIChat() {
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 h-6 text-white" />
           <div>
-            <h3 className="font-bold text-white">Juliette - Assistente AI</h3>
+            <h3 className="font-bold text-white">Julio - Assistente AI</h3>
             <p className="text-xs text-purple-100">🎤 Com síntese de voz • Gemini 2.0</p>
           </div>
         </div>
