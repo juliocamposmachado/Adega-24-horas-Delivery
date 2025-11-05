@@ -1,20 +1,30 @@
 # 🍷 Adega Rádio Tatuapé FM Express
 
-Sistema completo de e-commerce para loja de bebidas com integração Uber Direct para entregas.
+Sistema completo de e-commerce para loja de bebidas com integração Mercado Pago e Uber Direct para entregas.
+
+## 👨‍💻 Desenvolvedor
+
+**Julio Campos Machado**
+- 📱 WhatsApp: (11) 99294-6628 / (11) 97060-3441
+- 📧 Email: juliocamposmachado@gmail.com
+- 🏢 Empresa: Like Look Solutions
+- 🌐 Website: https://likelook.wixsite.com/solutions
 
 ## 🏗️ Arquitetura
 
 - **Frontend**: React + TypeScript + TailwindCSS + Vite
 - **Backend**: Node.js + Express + MongoDB
 - **Autenticação**: JWT
+- **Pagamentos**: Mercado Pago SDK
 - **Entregas**: Uber Direct SDK oficial
-- **Hospedagem**: Vercel (frontend) + Render/Heroku (backend)
+- **Hospedagem**: Vercel (fullstack)
 
 ## 📋 Pré-requisitos
 
 - Node.js 18+
-- MongoDB (local ou Atlas)
+- MongoDB Atlas
 - Conta Uber Direct (sandbox)
+- Conta Mercado Pago (produção)
 
 ## 🚀 Instalação
 
@@ -36,18 +46,34 @@ Crie o arquivo `.env` na pasta `backend`:
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/adega-radio-tatuape
+NODE_ENV=production
+MONGODB_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/adega-radio-tatuape?retryWrites=true&w=majority
 JWT_SECRET=sua_chave_secreta_super_segura_aqui
 
 # Uber Direct Credentials
-UBER_CLIENT_ID=
-UBER_CLIENT_SECRET=
-UBER_ASYMMETRIC_KEY_ID=
+UBER_CLIENT_ID=seu_client_id
+UBER_CLIENT_SECRET=seu_client_secret
+UBER_ASYMMETRIC_KEY_ID=seu_key_id
 UBER_SANDBOX=true
 
 # Endereço da loja
-STORE_ADDRESS=Rua Tatuapé, São Paulo - SP
-STORE_PHONE=+5511999999999
+STORE_ADDRESS=Rua Dante Pellacani, 92 - Tatuapé - São Paulo/SP - CEP 03334-070
+STORE_LAT=-23.5505199
+STORE_LNG=-46.6333094
+STORE_PHONE=+5511970603441
+
+# WhatsApp
+WHATSAPP_NUMBER=5511970603441
+
+# Mercado Pago Credentials
+MERCADO_PAGO_PUBLIC_KEY=sua_public_key
+MERCADO_PAGO_ACCESS_TOKEN=seu_access_token
+MERCADO_PAGO_CLIENT_ID=seu_client_id
+MERCADO_PAGO_CLIENT_SECRET=seu_client_secret
+
+# URLs
+FRONTEND_URL=https://adega-24-horas-delivery.vercel.app
+BACKEND_URL=https://adega-backend-eta.vercel.app
 ```
 
 ### 3. Configure o Frontend
@@ -60,8 +86,9 @@ npm install
 Crie o arquivo `.env` na pasta `frontend`:
 
 ```env
-VITE_API_URL=http://localhost:5000
-VITE_WHATSAPP_NUMBER=5511999999999
+VITE_API_URL=https://adega-backend-eta.vercel.app
+VITE_WHATSAPP_NUMBER=5511970603441
+VITE_MERCADO_PAGO_PUBLIC_KEY=sua_public_key
 ```
 
 ## 🎯 Executar em Desenvolvimento
@@ -114,21 +141,31 @@ git push heroku main
 
 ## 🛠️ Funcionalidades
 
-✅ Catálogo completo de produtos (vinhos, cervejas, destilados, etc.)
-✅ Carrinho de compras
-✅ Checkout com cálculo de frete via Uber Direct
+✅ Catálogo completo de produtos (vinhos, cervejas, destilados, energéticos, etc.)
+✅ Carrinho de compras com persistência
+✅ Checkout com múltiplas formas de pagamento
+✅ Integração Mercado Pago (PIX + Cartão)
+✅ Cálculo de frete via Uber Direct
 ✅ Rastreamento em tempo real
-✅ Painel administrativo
+✅ Painel administrativo completo
 ✅ CRUD de produtos
-✅ Sistema de cupons
-✅ Integração WhatsApp
+✅ Sistema de cupons de desconto
+✅ Integração WhatsApp para suporte
+✅ Chat AI para recomendações
 ✅ Responsivo (mobile + desktop)
+✅ SEO otimizado
 
-## 📱 Integração Uber Direct
+## 💳 Integrações
 
-O sistema usa o SDK oficial da Uber Direct para:
+### Mercado Pago
+- Pagamento via PIX
+- Pagamento com cartão de crédito/débito
+- Webhook para confirmação automática
+- Interface customizada com SDK React
+
+### Uber Direct
 - Cálculo de frete em tempo real
-- Criação de entregas
+- Criação automática de entregas
 - Rastreamento via webhook
 - Status: "Criado", "Em rota", "Entregue"
 
@@ -143,6 +180,21 @@ O sistema usa o SDK oficial da Uber Direct para:
 
 MIT
 
+## 🔐 Segurança
+
+- ✅ Variáveis de ambiente protegidas
+- ✅ Autenticação JWT
+- ✅ Validação de dados
+- ✅ CORS configurado
+- ✅ Rate limiting
+
 ## 📞 Suporte
 
-WhatsApp: (11) 99999-9999
+**Loja**: Adega Rádio Tatuapé FM Express
+- 📱 WhatsApp: (11) 97060-3441
+- 📍 Endereço: Rua Dante Pellacani, 92 - Tatuapé - São Paulo/SP
+
+**Desenvolvedor**: Julio Campos Machado
+- 📱 WhatsApp: (11) 99294-6628 / (11) 97060-3441
+- 📧 Email: juliocamposmachado@gmail.com
+- 🏢 Like Look Solutions: https://likelook.wixsite.com/solutions
