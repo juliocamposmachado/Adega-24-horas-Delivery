@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Wine, ShoppingCart, Menu, X, MessageCircle, LayoutDashboard } from 'lucide-react';
+import { Wine, ShoppingCart, Menu, X, MessageCircle, LayoutDashboard, Radio } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { products, categories } from './data/products';
 import { useCart } from './hooks/useCart';
@@ -163,6 +163,23 @@ function App() {
 
         {/* Cart Modal */}
         <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
+        {/* Rádio Tatuapé FM - Live Button */}
+        <a
+          href="https://radiotatuapefm.radiostream321.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 left-6 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-5 py-3 rounded-full shadow-lg transition z-50 flex items-center gap-2 group"
+          aria-label="Ouvir Rádio Tatuapé FM"
+        >
+          <Radio className="w-5 h-5 animate-pulse" />
+          <span className="font-semibold">Ouvir Rádio</span>
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+          </span>
+          <span className="text-xs font-bold animate-pulse">AO VIVO</span>
+        </a>
 
         {/* WhatsApp Floating Button */}
         <a
