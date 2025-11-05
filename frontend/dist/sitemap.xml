@@ -6,7 +6,7 @@
   
   <!-- Homepage -->
   <url>
-    <loc>https://adega-24-horas-delivery.vercel.app/</loc>
+    <loc>https://www.radiotatuapefm.com.br/</loc>
     <lastmod>2025-01-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
   
   <!-- Catálogo -->
   <url>
-    <loc>https://adega-24-horas-delivery.vercel.app/catalogo</loc>
+    <loc>https://www.radiotatuapefm.com.br/catalogo</loc>
     <lastmod>2025-01-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -22,7 +22,7 @@
   
   <!-- Sobre -->
   <url>
-    <loc>https://adega-24-horas-delivery.vercel.app/sobre</loc>
+    <loc>https://www.radiotatuapefm.com.br/sobre</loc>
     <lastmod>2025-01-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -30,7 +30,7 @@
   
   <!-- Checkout -->
   <url>
-    <loc>https://adega-24-horas-delivery.vercel.app/checkout</loc>
+    <loc>https://www.radiotatuapefm.com.br/checkout</loc>
     <lastmod>2025-01-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

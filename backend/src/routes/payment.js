@@ -3,9 +3,12 @@ import { MercadoPagoConfig, Preference } from 'mercadopago';
 
 const router = express.Router();
 
+// Simular armazenamento temporário de pedidos (em memória)
+const orders = new Map();
+
 // Configurar Mercado Pago
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
+  accessToken: (process.env.MERCADO_PAGO_ACCESS_TOKEN || '').trim(),
   options: { timeout: 5000, idempotencyKey: 'abc' }
 });
 
@@ -46,13 +49,13 @@ router.post('/create-preference', async (req, res) => {
         }
       },
       back_urls: {
-        success: `${process.env.FRONTEND_URL || 'http://localhost:5173'}`,
-        failure: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/checkout?error=payment`,
-        pending: `${process.env.FRONTEND_URL || 'http://localhost:5173'}?pending=true`
+        success: `${(process.env.FRONTEND_URL || 'http://localhost:5173').trim()}/checkout?paid=1&orderId=${encodeURIComponent(orderId || 'temp-' + Date.now())}`,
+        failure: `${(process.env.FRONTEND_URL || 'http://localhost:5173').trim()}/checkout?error=payment`,
+        pending: `${(process.env.FRONTEND_URL || 'http://localhost:5173').trim()}?pending=true`
       },
       auto_return: 'approved',
       external_reference: orderId || 'temp-' + Date.now(),
-      notification_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payment/webhook`,
+      notification_url: `${(process.env.BACKEND_URL || 'http://localhost:5000').trim()}/api/payment/webhook`,
       statement_descriptor: 'ADEGA RADIO TATUAPE'
     };
 
@@ -62,13 +65,18 @@ router.post('/create-preference', async (req, res) => {
       body: preferenceBody
     });
     
-    console.log('Preferência criada com sucesso:', response.body.id);
-    console.log('Init Point:', response.body.init_point);
+    console.log('Resposta completa:', JSON.stringify(response, null, 2));
+    
+    // A resposta pode vir em response ou response.body dependendo da versão
+    const result = response.body || response;
+    
+    console.log('Preferência criada com sucesso:', result.id);
+    console.log('Init Point:', result.init_point);
 
     res.json({
-      preferenceId: response.body.id,
-      initPoint: response.body.init_point,
-      sandboxInitPoint: response.body.sandbox_init_point
+      preferenceId: result.id,
+      initPoint: result.init_point,
+      sandboxInitPoint: result.sandbox_init_point
     });
   } catch (error) {
     console.error('Erro detalhado ao criar preferência:', error);
@@ -84,36 +92,10 @@ router.post('/create-preference', async (req, res) => {
 // Webhook para notificações do Mercado Pago
 router.post('/webhook', async (req, res) => {
   try {
-    const { type, data } = req.body;
-
-    if (type === 'payment') {
-      const paymentId = data.id;
-      
-      // Buscar informações do pagamento
-      const payment = await client.payment.get({ id: paymentId });
-      
-      const orderId = payment.body.external_reference;
-      const status = payment.body.status;
-      
-      // Atualizar status do pedido no banco de dados
-      const { default: Order } = await import('../models/Order.js');
-      
-      let orderStatus = 'pending';
-      if (status === 'approved') {
-        orderStatus = 'confirmed';
-      } else if (status === 'rejected' || status === 'cancelled') {
-        orderStatus = 'cancelled';
-      }
-      
-      await Order.findByIdAndUpdate(orderId, {
-        paymentStatus: status,
-        status: orderStatus,
-        paymentId: paymentId
-      });
-      
-      console.log(`Pedido ${orderId} atualizado: ${orderStatus}`);
-    }
+    console.log('Webhook recebido:', req.body);
     
+    // Apenas logar e responder OK
+    // O Mercado Pago enviará notificações aqui quando houver pagamentos
     res.status(200).send('OK');
   } catch (error) {
     console.error('Erro ao processar webhook:', error);
@@ -122,19 +104,40 @@ router.post('/webhook', async (req, res) => {
 });
 
 // Buscar status de pagamento
-router.get('/status/:paymentId', async (req, res) => {
+router.get('/status/:orderId', async (req, res) => {
   try {
-    const { paymentId } = req.params;
-    const payment = await client.payment.get({ id: parseInt(paymentId) });
+    const { orderId } = req.params;
+    const order = orders.get(orderId);
     
-    res.json({
-      status: payment.body.status,
-      statusDetail: payment.body.status_detail,
-      amount: payment.body.transaction_amount
-    });
+    if (!order) {
+      return res.status(404).json({ error: 'Pedido não encontrado' });
+    }
+    
+    res.json(order);
   } catch (error) {
-    console.error('Erro ao buscar status do pagamento:', error);
+    console.error('Erro ao buscar status do pedido:', error);
     res.status(500).json({ error: 'Erro ao buscar status' });
+  }
+});
+
+// Salvar pedido temporariamente
+router.post('/save-order', async (req, res) => {
+  try {
+    const orderData = req.body;
+    const orderId = orderData.orderId || 'order-' + Date.now();
+    
+    orders.set(orderId, {
+      ...orderData,
+      orderId,
+      createdAt: new Date(),
+      status: 'pending'
+    });
+    
+    console.log(`Pedido ${orderId} salvo:`, orderData);
+    res.json({ orderId, message: 'Pedido salvo com sucesso' });
+  } catch (error) {
+    console.error('Erro ao salvar pedido:', error);
+    res.status(500).json({ error: 'Erro ao salvar pedido' });
   }
 });
 

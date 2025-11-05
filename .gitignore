@@ -2,6 +2,9 @@
 node_modules/
 .pnp
 .pnp.js
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 
 # Vercel
 .vercel/
@@ -15,16 +18,24 @@ build/
 dist/
 frontend/dist/
 backend/dist/
+*.tsbuildinfo
 
 # Environment Variables - NÃO COMMITAR
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
 *.env
+!.env.example
 frontend/.env
+frontend/.env.production
 backend/.env
+backend/.env.production
+backend/.env.222
 
 # Logs
 npm-debug.log*
@@ -32,14 +43,26 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 pnpm-debug.log*
+*.log
 
 # Editor
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
 *~
+.history/
 
 # OS
 Thumbs.db
 .DS_Store
+*.iml
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# MongoDB
+*.db

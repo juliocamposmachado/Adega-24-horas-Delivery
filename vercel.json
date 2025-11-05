@@ -1,14 +1,12 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "/dist",
-  "framework": "vite",
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm install",
+  "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "env": {
-    "NPM_CONFIG_PRODUCTION": "false"
-  }
+  ]
 }

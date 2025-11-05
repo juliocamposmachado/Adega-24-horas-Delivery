@@ -1,6 +1,21 @@
 # 🍷 Adega Rádio Tatuapé FM Express
 
-Sistema completo de e-commerce para loja de bebidas com integração Mercado Pago e Uber Direct para entregas.
+## 🚀 A SUPER TECNOLOGIA DE ENTREGAS DA RÁDIO TATUAPÉ FM
+
+**Sistema revolucionário de e-commerce com integração total entre Mercado Pago, WhatsApp e Uber!**
+
+A Rádio Tatuapé FM desenvolveu uma tecnologia inovadora que une:
+- ✅ **Pagamento Online** via Mercado Pago (PIX/Cartão)
+- ✅ **Confirmação Automática** do pedido via WhatsApp
+- ✅ **Chamada de Uber** integrada com pickup na adega e dropoff no cliente
+- ✅ **Tudo em uma única tela** após o pagamento
+
+A tecnologia permite que o cliente:
+1. Pague online de forma segura
+2. Envie automaticamente os detalhes do pedido para a adega via WhatsApp
+3. Chame um Uber diretamente com origem na adega e destino no endereço de entrega
+
+**Resultado**: Processo 100% automatizado, rápido e sem fricção!
 
 ## 👨‍💻 Desenvolvedor
 
@@ -141,33 +156,68 @@ git push heroku main
 
 ## 🛠️ Funcionalidades
 
+### 🎯 TECNOLOGIA EXCLUSIVA RÁDIO TATUAPÉ FM
+✅ **Fluxo de Pedido Revolucionário**:
+  - Pagamento via Mercado Pago (PIX/Cartão)
+  - Tela de sucesso com 3 botões inteligentes:
+    1. 📲 **WhatsApp**: Envia pedido completo para a adega separar
+    2. 🚕 **Uber**: Chama corrida com pickup na adega e dropoff no cliente
+    3. 🏠 **Voltar**: Retorna à página inicial
+  - Tudo integrado e automático!
+
+### 📦 Funcionalidades Gerais
 ✅ Catálogo completo de produtos (vinhos, cervejas, destilados, energéticos, etc.)
-✅ Carrinho de compras com persistência
+✅ Carrinho de compras com persistência localStorage
 ✅ Checkout com múltiplas formas de pagamento
-✅ Integração Mercado Pago (PIX + Cartão)
-✅ Cálculo de frete via Uber Direct
-✅ Rastreamento em tempo real
+✅ Integração Mercado Pago (PIX + Cartão) com redirecionamento
+✅ Cálculo de frete via zonas e Uber Direct API
+✅ Integração WhatsApp Business com mensagens formatadas
+✅ Integração Uber Deep Link para chamar corridas
+✅ Rastreamento de pedidos
 ✅ Painel administrativo completo
-✅ CRUD de produtos
+✅ CRUD de produtos com imagens
 ✅ Sistema de cupons de desconto
-✅ Integração WhatsApp para suporte
-✅ Chat AI para recomendações
+✅ Chat AI para recomendações (Gemini)
 ✅ Responsivo (mobile + desktop)
 ✅ SEO otimizado
 
 ## 💳 Integrações
 
+### 🔥 SUPER TECNOLOGIA RÁDIO TATUAPÉ FM
+
+**Fluxo completo pós-pagamento:**
+
+1. **Mercado Pago** processa o pagamento (PIX/Cartão)
+2. Cliente é redirecionado para tela de sucesso
+3. **WhatsApp Integration**: Botão gera mensagem automática com:
+   - Número do pedido
+   - Dados do cliente
+   - Endereço completo
+   - Lista de produtos
+   - Valores (subtotal, frete, total)
+   - Instrução para a adega separar
+4. **Uber Deep Link**: Botão abre Uber com:
+   - Pickup: Rua Dante Pellacani, 92 - CEP 03334-070 (Adega)
+   - Dropoff: Endereço do cliente
+   - Cliente só confirma a corrida
+
 ### Mercado Pago
-- Pagamento via PIX
+- Pagamento via PIX instantâneo
 - Pagamento com cartão de crédito/débito
-- Webhook para confirmação automática
+- Redirecionamento automático após pagamento
+- Salvamento automático do pedido no localStorage
 - Interface customizada com SDK React
 
-### Uber Direct
-- Cálculo de frete em tempo real
-- Criação automática de entregas
-- Rastreamento via webhook
-- Status: "Criado", "Em rota", "Entregue"
+### Uber Integration
+- Deep Link para abertura do app Uber
+- Endereços pré-preenchidos (pickup + dropoff)
+- API Uber Direct para cálculo de frete no checkout
+- Compatível com mobile e desktop
+
+### WhatsApp Business
+- Mensagens formatadas automaticamente
+- Inclui todos os detalhes do pedido
+- Botão de envio direto
 
 ## 🎨 Design
 
