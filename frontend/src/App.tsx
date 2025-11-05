@@ -329,33 +329,165 @@ function CatalogoPage() {
 // Sobre Page
 function SobrePage() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-3xl">
-      <h1 className="text-4xl font-bold mb-8 text-center">Sobre Nós</h1>
-      <div className="card space-y-4 text-gray-300">
-        <p>
-          A <strong className="text-gold-500">Adega Rádio Tatuapé FM Express</strong> é sua adega de confiança 
-          para entrega rápida de bebidas premium.
+    <div className="container mx-auto px-4 py-12 max-w-5xl">
+      <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-gold-500 to-wine-700 bg-clip-text text-transparent">
+        Sobre Nós
+      </h1>
+
+      {/* Hero Section */}
+      <div className="card mb-8 bg-gradient-to-br from-gray-900 to-gray-800 border-gold-500/30">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-gold-500 mb-4">
+              Adega Rádio Tatuapé FM Express
+            </h2>
+            <p className="text-xl text-gray-300 mb-4">
+              Entrega rápida de bebidas premium com a essência cultural da Rádio Tatuapé FM
+            </p>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://radiotatuapefm.radiostream321.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <Radio className="w-5 h-5" />
+                Ouvir Rádio Ao Vivo
+              </a>
+            </div>
+          </div>
+          <div className="text-gray-400 space-y-2">
+            <p>• 88 produtos selecionados</p>
+            <p>• Entrega via Uber Direct</p>
+            <p>• Aberto 24 horas</p>
+            <p>• Rádio ao vivo 24/7</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Nossa História */}
+      <div className="card mb-8">
+        <h2 className="text-2xl font-bold text-gold-500 mb-6 flex items-center gap-2">
+          <Radio className="w-6 h-6" />
+          Nossa História: Rádio Tatuapé FM
+        </h2>
+        <div className="space-y-4 text-gray-300 text-justify leading-relaxed">
+          <p>
+            A <strong className="text-gold-500">Rádio Tatuapé FM</strong> é uma emissora nascida nos vibrantes anos 1980, época em que o rock pulsava com autenticidade e a juventude paulistana vivia intensamente o som das guitarras elétricas, das vozes rasgadas e da energia que moldou gerações. Criada com alma e propósito, a Rádio Tatuapé FM carrega até hoje o espírito rebelde, cultural e apaixonado dos tempos em que a música significava mais do que entretenimento — significava identidade.
+          </p>
+          <p>
+            Sob a direção e curadoria de <strong className="text-wine-500">Julio Campos Machado</strong>, estudante de Gestão Pública pela Universidade Anhembi Morumbi, a Rádio Tatuapé FM tornou-se uma plataforma de cultura popular, conectando música, cidadania e desenvolvimento local. Assim como uma adega 24 horas nunca fecha as portas para quem busca qualidade, a Rádio Tatuapé FM está sempre aberta — 24 horas por dia, sete dias por semana — transmitindo o melhor do Classic Rock, Hard Rock, Heavy Metal Tradicional, B-Sides, raridades e bandas contemporâneas que mantêm viva a chama dos anos 80.
+          </p>
+          <p>
+            A Rádio Tatuapé FM é mais do que uma emissora; é uma <strong className="text-gold-500">adega 24 horas de música</strong>. Assim como o vinho precisa de tempo e maturação, a Rádio Tatuapé FM amadureceu ao longo das décadas, aperfeiçoando seu repertório, sua curadoria e seu compromisso com o público. A cada faixa tocada, há um cuidado artesanal, uma seleção que respeita o gosto refinado dos verdadeiros amantes da música autêntica.
+          </p>
+        </div>
+      </div>
+
+      {/* A Filosofia da Adega */}
+      <div className="card mb-8 bg-gradient-to-r from-wine-900/20 to-gray-900">
+        <h2 className="text-2xl font-bold text-gold-500 mb-6 flex items-center gap-2">
+          <Wine className="w-6 h-6" />
+          A Filosofia da Adega 24 Horas
+        </h2>
+        <div className="space-y-4 text-gray-300 text-justify leading-relaxed">
+          <p>
+            A <strong className="text-gold-500">adega 24 horas Rádio Tatuapé FM</strong> representa esse conceito: um espaço onde a arte sonora é preservada, distribuída e compartilhada sem interrupções. Como uma adega que guarda vinhos raros, a Rádio Tatuapé FM guarda sons raros. Clássicos do Led Zeppelin, Deep Purple, Black Sabbath, Scorpions, Iron Maiden, Rush, Queen, Pink Floyd e Judas Priest convivem harmoniosamente com faixas menos conhecidas, B-Sides de álbuns históricos e novas bandas que resgatam a estética e a sonoridade dos anos 80.
+          </p>
+          <p>
+            O Tatuapé, bairro símbolo da força cultural e da diversidade paulistana, é o berço da Rádio Tatuapé FM — um ponto de referência tanto para os apreciadores de música quanto para os que buscam uma adega 24 horas de ideias, sons e encontros. Ali, na <strong className="text-wine-500">Rua Dante Pellacani, 92</strong>, está a base dessa iniciativa que une paixão, tecnologia e identidade.
+          </p>
+          <p>
+            A filosofia da Rádio Tatuapé FM é clara: manter viva a essência do rock e da boa música em uma era digital cada vez mais volátil. Assim como uma adega 24 horas mantém seu estoque sempre renovado e disponível para quem busca qualidade a qualquer momento, a Rádio Tatuapé FM mantém sua programação renovada, oferecendo diversidade, autenticidade e curadoria precisa.
+          </p>
+        </div>
+      </div>
+
+      {/* Nossa Missão */}
+      <div className="card mb-8">
+        <h2 className="text-2xl font-bold text-gold-500 mb-6">Nossa Missão</h2>
+        <div className="space-y-4 text-gray-300 text-justify leading-relaxed">
+          <p>
+            A <strong className="text-gold-500">adega 24 horas Rádio Tatuapé FM</strong> é um conceito de continuidade — a música não para, o som não dorme, o rock não morre. A cada madrugada, quando a cidade silencia, a Rádio Tatuapé FM continua viva, transmitindo notas que ecoam histórias. A cada amanhecer, quando os trabalhadores despertam e os sonhos recomeçam, a Rádio Tatuapé FM está lá, firme, como uma adega 24 horas de energia sonora e memória cultural.
+          </p>
+          <p>
+            A programação da Rádio Tatuapé FM é planejada para que cada faixa tenha propósito. Há momentos para o rock progressivo, para o hard visceral, para o metal técnico, e até para as baladas que marcaram corações nos anos 80. Tudo é pensado, tudo é afinado. A Rádio Tatuapé FM não se limita a reproduzir hits; ela promove um diálogo entre o ontem e o hoje, entre o analógico e o digital, entre a guitarra distorcida e o streaming de alta definição.
+          </p>
+          <p>
+            Em paralelo, a adega 24 horas Rádio Tatuapé FM inspira um estilo de vida: o da convivência, da amizade e da boa conversa ao som de uma trilha inesquecível. Assim como uma taça de vinho é melhor apreciada em boa companhia, o som da Rádio Tatuapé FM é melhor desfrutado com os amigos, com a família, com quem entende que música boa é sinônimo de vida bem vivida.
+          </p>
+        </div>
+      </div>
+
+      {/* Cultura e Política Pública */}
+      <div className="card mb-8 bg-gradient-to-r from-gray-900 to-wine-900/20">
+        <h2 className="text-2xl font-bold text-gold-500 mb-6">Cultura como Política Pública</h2>
+        <div className="space-y-4 text-gray-300 text-justify leading-relaxed">
+          <p>
+            A Rádio Tatuapé FM acredita que <strong className="text-wine-500">cultura é também política pública</strong> — uma forma de educar, inspirar e transformar. Julio Campos Machado, em sua trajetória na Gestão Pública pela Anhembi Morumbi, reforça esse princípio: é preciso promover cultura de qualidade e acessível. Assim como uma adega 24 horas oferece acesso contínuo a produtos de qualidade, a Rádio Tatuapé FM garante acesso contínuo a conteúdo sonoro que eleva o espírito e educa o ouvido.
+          </p>
+          <p>
+            A Rádio Tatuapé FM e sua filosofia de adega 24 horas representam <strong className="text-gold-500">resistência cultural</strong>. Enquanto muitas rádios migraram para o entretenimento superficial e descartável, a Rádio Tatuapé FM preservou o compromisso com o conteúdo. É uma adega que não se curva à pressa, que respeita o tempo da boa música, que entende que o rock não é apenas som — é atitude, é reflexão, é história.
+          </p>
+        </div>
+      </div>
+
+      {/* Nossos Produtos */}
+      <div className="card mb-8">
+        <h2 className="text-2xl font-bold text-gold-500 mb-6 flex items-center gap-2">
+          <ShoppingCart className="w-6 h-6" />
+          Nossas Categorias de Produtos
+        </h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-gray-800/50 p-4 rounded-lg">
+            <h3 className="font-bold text-wine-500 mb-3">Bebidas Premium</h3>
+            <ul className="space-y-2 text-gray-400 text-sm">
+              <li>• Vinhos (13 opções)</li>
+              <li>• Whiskies (9 opções)</li>
+              <li>• Gin (7 opções)</li>
+              <li>• Vodkas (4 opções)</li>
+            </ul>
+          </div>
+          <div className="bg-gray-800/50 p-4 rounded-lg">
+            <h3 className="font-bold text-wine-500 mb-3">Cervejas e Bebidas</h3>
+            <ul className="space-y-2 text-gray-400 text-sm">
+              <li>• Cervejas (15 opções)</li>
+              <li>• Energéticos (7 opções)</li>
+              <li>• Refrigerantes (6 opções)</li>
+              <li>• Águas (5 opções)</li>
+            </ul>
+          </div>
+        </div>
+        <p className="text-gray-400 mt-6 text-center">
+          🚚 <strong className="text-gold-500">Entrega rápida via Uber Direct</strong> com rastreamento em tempo real
         </p>
-        <p>
-          Com mais de 88 produtos selecionados, incluindo vinhos, cervejas, destilados, gin, vodka e whisky, 
-          oferecemos qualidade e variedade para todos os gostos.
-        </p>
-        <p>
-          Utilizamos a tecnologia <strong>Uber Direct</strong> para garantir entregas rápidas e rastreamento 
-          em tempo real do seu pedido.
-        </p>
-        <h3 className="text-xl font-bold text-gold-500 mt-8 mb-4">Nossas Categorias:</h3>
-        <ul className="list-disc list-inside space-y-2 text-gray-400">
-          <li>Vinhos (13 opções)</li>
-          <li>Cervejas (15 opções)</li>
-          <li>Whiskies (9 opções)</li>
-          <li>Gin (7 opções)</li>
-          <li>Energéticos (7 opções)</li>
-          <li>Refrigerantes (6 opções)</li>
-          <li>Águas (5 opções)</li>
-          <li>Vodkas (4 opções)</li>
-          <li>E muito mais!</li>
-        </ul>
+      </div>
+
+      {/* Call to Action */}
+      <div className="card bg-gradient-to-r from-gold-500/10 to-wine-700/10 border-gold-500/50">
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold text-gold-500">
+            Experimente a Adega 24 Horas Rádio Tatuapé FM
+          </h2>
+          <p className="text-gray-300">
+            Onde a música nunca dorme e a qualidade nunca descansa.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <a
+              href="https://radiotatuapefm.radiostream321.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary inline-flex items-center gap-2"
+            >
+              <Radio className="w-5 h-5" />
+              Ouvir Rádio Ao Vivo
+            </a>
+            <Link to="/catalogo" className="btn-secondary inline-flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5" />
+              Ver Catálogo
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
